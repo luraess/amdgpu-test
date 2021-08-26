@@ -21,8 +21,7 @@ function test_amdgpu()
     # gather
     c     = Array(c_d)
     # test
-    @test isapprox(c, c_cpu)
-    return
+    return @test isapprox(c, c_cpu)
 end
 
 test_amdgpu()

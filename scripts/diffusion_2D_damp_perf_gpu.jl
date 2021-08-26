@@ -64,7 +64,7 @@ end
     Hold   = copy(H)
     H2     = copy(H)
     nthreads = (BLOCKX, BLOCKY, 1)
-    nblocks  = (GRIDX,  GRIDY,  1)
+    ngrid    = (nx,     ny,     1)
     _dx, _dy, _dt = 1.0/dx, 1.0/dy, 1.0/dt
     min_dxy2  = min(dx,dy)^2
     t = 0.0; it = 0; ittot = 0; t_tic = 0.0; niter = 0
@@ -74,16 +74,16 @@ end
         # Picard-type iteration
         while err>tol && iter<itMax
             if (it==1 && iter==0) t_tic = Base.time(); niter = 0 end
-            wait(@roc blocks=nblocks threads=nthreads compute_update!(H2, dHdtau, H, Hold, _dt, damp, min_dxy2, _dx, _dy))
+            wait(@roc gridsize=ngrid groupsize=nthreads compute_update!(H2, dHdtau, H, Hold, _dt, damp, min_dxy2, _dx, _dy))
             H, H2 = H2, H
             if iter % nout == 0
-                wait(@roc blocks=nblocks threads=nthreads compute_residual!(ResH, H, Hold, _dt, _dx, _dy))
-                err = norm(ResH)/length(ResH)
+                wait(@roc gridsize=ngrid groupsize=nthreads compute_residual!(ResH, H, Hold, _dt, _dx, _dy))
+                err = norm(Array(ResH))/length(ResH)
             end
             iter += 1; niter += 1
         end
         ittot += iter; it += 1; t += dt
-        wait(@roc blocks=nblocks threads=nthreads assign!(Hold, H))
+        wait(@roc gridsize=ngrid groupsize=nthreads assign!(Hold, H))
     end
     t_toc = Base.time() - t_tic
     A_eff = (2*2+1)/1e9*nx*ny*sizeof(Float64)  # Effective main memory access per iteration [GB]
