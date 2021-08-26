@@ -62,4 +62,6 @@ Vega 20 WKS GL-XE [Radeon Pro VII]
 T_peak 1024 GB/s
 ault20: time_s=0.79 T_eff=726.34 (70% of T_peak)
 ```
+> Note that the results on the Radeon VII seem to be in-line with the results reported [in the Julia BabelStream bench](https://github.com/UoB-HPC/BabelStream/pull/106#issuecomment-897621652).
+
 - The 2D diffusion code runs at `120GB/s` on Vega 10 abd I need to test if the the ouput is correct.
