@@ -48,15 +48,16 @@ Note that testing failed for me.
 ## Results
 - The Quick Start example pass
 - The memcopy3D produce following output (tested on 2 different GPUs)
-  - Vega 10
+On Vega 10
 ```
 Vega 10 XT [Radeon PRO WX 9100]
 T_peak 484 GB/s
 ault08: time_s=1.75 T_eff=330.86 (68% of T_peak)
 ```
-  - Vega 20
+On Vega 20
 ```
 Vega 20 WKS GL-XE [Radeon Pro VII]
 T_peak 1024 GB/s
 ault20: time_s=0.79 T_eff=726.34 (70% of T_peak)
 ```
+- The 2D diffusion code runs at `120GB/s` on Vega 10 abd I need to test if the the ouput is correct.
