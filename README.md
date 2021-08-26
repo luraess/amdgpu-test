@@ -47,13 +47,15 @@ Note that testing failed for me.
 
 ## Results
 - The Quick Start example pass
-- The memcopy3D produce following output (tested on 2 different GPUs)
+- The memcopy3D produce following output (tested on 2 different GPUs):
+
 On Vega 10
 ```
 Vega 10 XT [Radeon PRO WX 9100]
 T_peak 484 GB/s
 ault08: time_s=1.75 T_eff=330.86 (68% of T_peak)
 ```
+
 On Vega 20
 ```
 Vega 20 WKS GL-XE [Radeon Pro VII]
