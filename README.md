@@ -52,6 +52,7 @@ Note that testing failed for me.
 
 ## Results
 ### The Quick Start example pass
+👉 **script** [`test_amdgpu.jl`](scripts/test_amdgpu.jl)
 
 ### The memcopy3D produce following output (tested on 2 different GPUs):
 👉 **script** [`memcopy3D_amdgpu.jl`](scripts/memcopy3D_amdgpu.jl)
