@@ -44,8 +44,9 @@ Note that testing failed for me.
 
 ## The scripts
 * [`test_amdgpu.jl`](scripts/test_amdgpu.jl) The [Quick Start example](https://amdgpu.juliagpu.org/stable/quickstart/) from AMDGPU.jl GitHub's
-* [`memcopy3D_AMD.jl`](scripts/memcopy3D_AMD.jl) The memcopy tool (adapted from [here](https://github.com/luraess/parallel-gpu-workshop-JuliaCon21/blob/main/extras/memcopy3D.jl))
-* [`diffusion_2D_damp_perf_gpu.jl`](scripts/diffusion_2D_damp_perf_gpu.jl) The 2D diffusion solver [from JuliaCon21](https://github.com/luraess/parallel-gpu-workshop-JuliaCon21#gpu-implementation) workshop that delivers 92% of T_peak on Nvidia Tesla V100 PCIe 16GB GPUs.
+* [`memcopy3D_amdgpu.jl`](scripts/memcopy3D_amdgpu.jl) The memcopy tool (adapted from [here](https://github.com/luraess/parallel-gpu-workshop-JuliaCon21/blob/main/extras/memcopy3D.jl))
+* [`diffusion_2D_damp_perf_amdgpu.jl`](scripts/diffusion_2D_damp_perf_amdgpu.jl) The 2D diffusion solver [from JuliaCon21](https://github.com/luraess/parallel-gpu-workshop-JuliaCon21#gpu-implementation) workshop that delivers 92% of T_peak on Nvidia Tesla V100 PCIe 16GB GPUs.
+* [`diffusion_2D_perf_amdgpu.jl`](scripts/diffusion_2D_perf_amdgpu.jl) Another "simpler" 2D diffusion script
 
 ## Results
 ### The Quick Start example pass
@@ -75,4 +76,4 @@ The 2D diffusion code runs at `120GB/s` (bad) on Vega 10 and I need to test if t
 
 ## Current issues/challenges
 - 30% difference between measured `T_peak` and vendor announced `T_peak_vendor`. On Nvidia Tesla V100 GPU, the difference is about 7% only.
-- Very low perf of current naive AMD version [`diffusion_2D_damp_perf_gpu.jl`](scripts/diffusion_2D_damp_perf_gpu.jl). The Nvidia counterpart runs at 92% of `T_peak`
+- Very low perf of current naive AMD version [`diffusion_2D_damp_perf_amdgpu.jl`](scripts/diffusion_2D_damp_perf_amdgpu.jl). The Nvidia counterpart runs at 92% of `T_peak`
