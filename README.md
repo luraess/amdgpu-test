@@ -1,6 +1,8 @@
 # AMD GPU test
 AMD GPU backend test
 
+WIP 🚧
+
 ## Installation
 👉 Steps to get Julia and `AMDGPU.jl` on CSCS's `ault` R&D system
 
@@ -77,7 +79,7 @@ WIP 🚧
 The 2D diffusion code runs at `256GB/s` on Vega 10, 52% of `T_peak` (memcopy).
 
 ### Diffusion 2D nonlinear
-👉 **script** [`diffusion_2D_perf_amdgpu.jl`](scripts/diffusion_2D_perf_amdgpu.jl)
+👉 **script** [`diffusion_2D_damp_perf_amdgpu.jl`](scripts/diffusion_2D_damp_perf_amdgpu.jl)
 
 WIP 🚧
 
