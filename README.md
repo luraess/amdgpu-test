@@ -45,14 +45,14 @@ Note that testing failed for me.
 ## The scripts
 * [`test_amdgpu.jl`](scripts/test_amdgpu.jl) The [Quick Start example](https://amdgpu.juliagpu.org/stable/quickstart/) from AMDGPU.jl GitHub's
 * [`memcopy3D_amdgpu.jl`](scripts/memcopy3D_amdgpu.jl) The memcopy tool (adapted from [here](https://github.com/luraess/parallel-gpu-workshop-JuliaCon21/blob/main/extras/memcopy3D.jl))
-* [`diffusion_2D_perf_amdgpu.jl`](scripts/diffusion_2D_perf_amdgpu.jl) Another "simpler" 2D diffusion script
+* [`diffusion_2D_perf_amdgpu.jl`](scripts/diffusion_2D_perf_amdgpu.jl) A "simpler" 2D diffusion script
 * [`diffusion_2D_damp_perf_amdgpu.jl`](scripts/diffusion_2D_damp_perf_amdgpu.jl) The 2D diffusion solver [from JuliaCon21](https://github.com/luraess/parallel-gpu-workshop-JuliaCon21#gpu-implementation) workshop that delivers 92% of T_peak on Nvidia Tesla V100 PCIe 16GB GPUs.
 
 ## Results
 ### The Quick Start example pass
 
 ### The memcopy3D produce following output (tested on 2 different GPUs):
-**script** [`memcopy3D_amdgpu.jl`](scripts/memcopy3D_amdgpu.jl)
+👉 **script** [`memcopy3D_amdgpu.jl`](scripts/memcopy3D_amdgpu.jl)
 
 On Vega 10
 ```
@@ -70,14 +70,14 @@ ault20: time_s=0.79 T_eff=726.34 (70% of T_peak_vendor)
 > Note that the results on the Radeon VII seem to be in-line with the results reported [in the Julia BabelStream bench](https://github.com/UoB-HPC/BabelStream/pull/106#issuecomment-897621652).
 
 ### Diffusion 2D "simple"
-**script** [`diffusion_2D_perf_amdgpu.jl`](scripts/diffusion_2D_perf_amdgpu.jl)
+👉 **script** [`diffusion_2D_perf_amdgpu.jl`](scripts/diffusion_2D_perf_amdgpu.jl)
 
 WIP 🚧
 
 The 2D diffusion code runs at `256GB/s` on Vega 10, 52% of `T_peak` (memcopy).
 
 ### Diffusion 2D nonlinear
-**script** [`diffusion_2D_perf_amdgpu.jl`](scripts/diffusion_2D_perf_amdgpu.jl)
+👉 **script** [`diffusion_2D_perf_amdgpu.jl`](scripts/diffusion_2D_perf_amdgpu.jl)
 
 WIP 🚧
 
