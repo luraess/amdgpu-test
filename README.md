@@ -43,6 +43,10 @@ test AMDGPU
 ```
 Note that testing failed for me.
 
+## Running the scripts
+```sh
+julia -O3 --check-bounds=no --math-mode=fast my_script.jl
+```
 
 ## The scripts
 * [`test_amdgpu.jl`](scripts/test_amdgpu.jl) The [Quick Start example](https://amdgpu.juliagpu.org/stable/quickstart/) from AMDGPU.jl GitHub's
@@ -60,14 +64,14 @@ Note that testing failed for me.
 On Vega 10
 ```
 Vega 10 XT [Radeon PRO WX 9100]
-T_peak_vendor 484 GB/s
+T_peak_vendor 484 GB/s (AMD website)
 ault08: time_s=1.75 T_eff=330.86 (68% of T_peak_vendor)
 ```
 
 On Vega 20
 ```
 Vega 20 WKS GL-XE [Radeon Pro VII]
-T_peak_vendor 1024 GB/s
+T_peak_vendor 1024 GB/s (AMD website)
 ault20: time_s=0.79 T_eff=726.34 (70% of T_peak_vendor)
 ```
 > Note that the results on the Radeon VII seem to be in-line with the results reported [in the Julia BabelStream bench](https://github.com/UoB-HPC/BabelStream/pull/106#issuecomment-897621652).
@@ -77,7 +81,7 @@ ault20: time_s=0.79 T_eff=726.34 (70% of T_peak_vendor)
 
 WIP 🚧
 
-The 2D diffusion code runs at `256GB/s` on Vega 10, 52% of `T_peak` (memcopy).
+The 2D diffusion code runs at `256GB/s` on Vega 10, 77% of `T_peak` (memcopy).
 
 ### Diffusion 2D nonlinear
 👉 **script** [`diffusion_2D_damp_perf_amdgpu.jl`](scripts/diffusion_2D_damp_perf_amdgpu.jl)
@@ -88,5 +92,5 @@ The 2D diffusion code runs at `120GB/s` (bad) on Vega 10 and I need to test if t
 
 ## Current issues/challenges
 - 30% difference between measured `T_peak` and vendor announced `T_peak_vendor`. On Nvidia Tesla V100 GPU, the difference is about 7% only.
-- "Only" 50% of `T_peak` for simple 2D diffusion code (Nvidia counterpart runs at 87%)
+- 77% of `T_peak` for simple 2D diffusion code (Nvidia counterpart runs at 88%)
 - Low perf of current naive AMD version [`diffusion_2D_damp_perf_amdgpu.jl`](scripts/diffusion_2D_damp_perf_amdgpu.jl). The Nvidia counterpart runs at 92% of `T_peak`
