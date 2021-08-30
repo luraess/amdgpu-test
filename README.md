@@ -1,7 +1,9 @@
 # AMD GPU test
 AMD GPU backend test
 
-## Installing Julia and `AMDGPU.jl` on CSCS's `ault` R&D system
+## Installation
+👉 Steps to get Julia and `AMDGPU.jl` on CSCS's `ault` R&D system
+
 Log in to the system:
 ```sh
 ssh <user>@ault.cscs.ch
@@ -46,22 +48,31 @@ Note that testing failed for me.
 * [`diffusion_2D_damp_perf_gpu.jl`](scripts/diffusion_2D_damp_perf_gpu.jl) The 2D diffusion solver [from JuliaCon21](https://github.com/luraess/parallel-gpu-workshop-JuliaCon21#gpu-implementation) workshop that delivers 92% of T_peak on Nvidia Tesla V100 PCIe 16GB GPUs.
 
 ## Results
-- The Quick Start example pass
-- The memcopy3D produce following output (tested on 2 different GPUs):
+### The Quick Start example pass
+
+### The memcopy3D produce following output (tested on 2 different GPUs):
 
 On Vega 10
 ```
 Vega 10 XT [Radeon PRO WX 9100]
 T_peak 484 GB/s
-ault08: time_s=1.75 T_eff=330.86 (68% of T_peak)
+ault08: time_s=1.75 T_eff=330.86 (68% of T_peak_vendor)
 ```
 
 On Vega 20
 ```
 Vega 20 WKS GL-XE [Radeon Pro VII]
 T_peak 1024 GB/s
-ault20: time_s=0.79 T_eff=726.34 (70% of T_peak)
+ault20: time_s=0.79 T_eff=726.34 (70% of T_peak_vendor)
 ```
 > Note that the results on the Radeon VII seem to be in-line with the results reported [in the Julia BabelStream bench](https://github.com/UoB-HPC/BabelStream/pull/106#issuecomment-897621652).
 
-- The 2D diffusion code runs at `120GB/s` on Vega 10 abd I need to test if the the ouput is correct.
+### Diffusion 2D
+
+WIP 🚧
+
+The 2D diffusion code runs at `120GB/s` (bad) on Vega 10 and I need to test if the the ouput is correct.
+
+## Current issues/challenges
+- 30% difference between measured `T_peak` and vendor announced `T_peak_vendor`. On Nvidia Tesla V100 GPU, the difference is about 7% only.
+- Very low perf of current naive AMD version [`diffusion_2D_damp_perf_gpu.jl`](scripts/diffusion_2D_damp_perf_gpu.jl). The Nvidia counterpart runs at 92% of `T_peak`
