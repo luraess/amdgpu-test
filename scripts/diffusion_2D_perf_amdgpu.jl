@@ -36,7 +36,7 @@ end
     _dx, _dy= 1.0/dx, 1.0/dy
     # Array initialisation
     C       = ROCArray(exp.(.-(xc .- Lx/2).^2 .-(yc' .- Ly/2).^2))
-    C2      = similar(C)
+    C2      = copy(C)
     TBSize  = (BLOCKX, BLOCKY, 1)
     GSize   = (nx, ny, 1)
     size_C1_2, size_C2_2 = size(C,1)-2, size(C,2)-2
