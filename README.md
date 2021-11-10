@@ -29,7 +29,7 @@ srun -p amdvega -w ault07 --gres=gpu:1 -A c23 --time=01:00:00 --pty bash
 
 Load AMD-related modules:
 ```sh
-module load rocm hip-rocclr hip hsa-rocr-dev hsakmt-roct llvm-amdgpu rocm-cmake rocminfo roctracer-dev-api
+module load rocm hip-rocclr hip hsa-rocr-dev hsakmt-roct llvm-amdgpu rocm-cmake rocminfo roctracer-dev-api rocprofiler-dev rocm-smi-lib
 ```
 Launch Julia:
 ```sh
