@@ -88,7 +88,25 @@ The 2D diffusion code runs at `583GB/s` on **Vega 20**, 79% of `T_peak` (memcopy
 
 WIP 🚧
 
-The 2D diffusion code runs at `120GB/s` (bad) on Vega 10 and I need to test if the the ouput is correct.
+### Running on Satori (Vega20 and V100 SXM2)
+
+On Vega20 ([scripts](scripts)):
+```sh
+[luraess@node2004 amdgpu-test]$ juliamdp -O3 --check-bounds=no memcopy3D_amdgpu.jl 
+A_eff = (((2 * 1 + 1) * 1) / 1.0e9) * nx * ny * nz * sizeof(Float64) = 6.442450944
+time_s=0.7967000007629395 T_eff=727.7778139886401
+[luraess@node2004 amdgpu-test]$ juliamdp -O3 --check-bounds=no diffusion_2D_perf_amdgpu.jl 
+Time = 2.741 sec, T_eff = 538.00 GB/s (niter = 610)
+```
+
+On V100 SXM2 ([scripts_cuda](scripts_cuda)):
+```sh
+[luraess@node0049 amdgpu-test-cudaref]$ juliap -O3 --check-bounds=no memcopy3D.jl 
+A_eff = (((2 * 1 + 1) * 1) / 1.0e9) * nx * ny * nz * sizeof(Float64) = 6.442450944
+time_s=0.7179579734802246 T_eff=807.5968320950342
+[luraess@node0049 amdgpu-test-cudaref]$ juliap -O3 --check-bounds=no diffusion_2D_perf_gpu.jl 
+Time = 2.017 sec, T_eff = 730.00 GB/s (niter = 610)
+```
 
 ## Current issues/challenges
 - 30% difference between measured `T_peak` and vendor announced `T_peak_vendor`. On Nvidia Tesla V100 GPU, the difference is about 7% only.
