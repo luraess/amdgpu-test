@@ -91,7 +91,7 @@ WIP 🚧
 ### Running on Satori (Vega20 and V100 SXM2)
 
 On Vega20 ([scripts](scripts)):
-```sh
+```
 [luraess@node2004 amdgpu-test]$ juliamdp -O3 --check-bounds=no memcopy3D_amdgpu.jl 
 A_eff = (((2 * 1 + 1) * 1) / 1.0e9) * nx * ny * nz * sizeof(Float64) = 6.442450944
 time_s=0.7967000007629395 T_eff=727.7778139886401
@@ -100,7 +100,7 @@ Time = 2.741 sec, T_eff = 538.00 GB/s (niter = 610)
 ```
 
 On V100 SXM2 ([scripts_cuda](scripts_cuda)):
-```sh
+```
 [luraess@node0049 amdgpu-test-cudaref]$ juliap -O3 --check-bounds=no memcopy3D.jl 
 A_eff = (((2 * 1 + 1) * 1) / 1.0e9) * nx * ny * nz * sizeof(Float64) = 6.442450944
 time_s=0.7179579734802246 T_eff=807.5968320950342
