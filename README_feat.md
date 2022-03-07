@@ -11,6 +11,6 @@ Visual profiling can be achieved using `rocprof` tool and inspecting the `hsa-tr
 /opt/rocm/bin/rocprof --hsa-trace ~/julia_x86/julia-1.7.2/bin/julia amdgpu_test.jl
 ```
 
-The `.json` output file can be viewed using the Chrome browser opening `chrome://tracing` in Chrome.
+The `.json` output file can be viewed using the Chrome browser opening `chrome://tracing` in Chrome:
 
 ![](docs/rocprof_chrome_tracer.png)
