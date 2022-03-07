@@ -1,3 +1,3 @@
 "Name","Calls","TotalDurationNs","AverageNs","Percentage"
-"julia_memcopy_triad__2293(ROCDeviceArray<Float64, 2, 1>, ROCDeviceArray<Float64, 2, 1>, ROCDeviceArray<Float64, 2, 1>, Float64, Int64) [clone .kd]",3,25201406,8400468,62.04756828095502
-"julia__5_1187(ROCKernelContext, ROCDeviceArray<Float64, 2, 1>, Float64) [clone .kd]",3,15414861,5138287,37.95243171904498
+"julia_memcopy_triad__2345(ROCDeviceArray<Float32, 2, 1>, ROCDeviceArray<Float32, 2, 1>, ROCDeviceArray<Float32, 2, 1>, Float64, Int64) [clone .kd]",3,21889410,7296470,59.46484758550455
+"julia__5_1240(ROCKernelContext, ROCDeviceArray<Float32, 2, 1>, Float32) [clone .kd]",3,14921262,4973754,40.53515241449545
