@@ -18,19 +18,19 @@ function main()
     threads = (32, 8)
     grid    = (nx, ny)
 
-    A = AMDGPU.zeros(Float64,nx,ny)
-    B = AMDGPU.ones( Float64,nx,ny)
-    C = AMDGPU.ones( Float64,nx,ny)
+    A = AMDGPU.zeros(nx,ny)
+    B =  AMDGPU.ones(nx,ny)
+    C =  AMDGPU.ones(nx,ny)
 
     s = 1.0
 
-    # AMDGPU.device!(1)
-    AMDGPU.set_default_agent!(AMDGPU.get_agents(:gpu)[1])
+    AMDGPU.device!(1) # Replace AMDGPU.set_default_agent!(AMDGPU.get_agents(:gpu)[1])
+    println("Selecting device $(AMDGPU.device())")
 
     qs = Vector{AMDGPU.HSAQueue}(undef,2)
     for iside = 1:2
         qs[iside] = AMDGPU.HSAQueue(get_default_agent())
-        priority = iside == 1 ? AMDGPU.HSA.QUEUE_PRIORITY_HIGH : AMDGPU.HSA.QUEUE_PRIORITY_LOW
+        priority = iside == 1 ? AMDGPU.HSA.AMD_QUEUE_PRIORITY_HIGH : AMDGPU.HSA.AMD_QUEUE_PRIORITY_LOW
         AMDGPU.HSA.amd_queue_set_priority(qs[iside].queue,priority)
     end
 
