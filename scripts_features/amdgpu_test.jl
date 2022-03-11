@@ -52,19 +52,17 @@ function main()
     for irep = 1:nrep
         for iside = 1:2
             signals[iside] = @roc groupsize=threads gridsize=grid queue=qs[iside] memcopy_triad!(A, B, C, s, nx2, iside)
-            @async wait(signals[iside])
         end
 
-        # for iside = 1:2 # the same as @async in the loop above
-        #     wait(signals[iside])
-        # end
-
-        for iside = 1
-            signals[iside] = @roc groupsize=threads gridsize=grid queue=qs[iside] copy2buf!(Buf, A, nx2)
-            wait(signals[iside]) # without @async here host blocks until cpy2buf is done before going to next irep
-            # one could use @async if next task is totally independent 
+        wait(signals[1])
+        
+        signals[1] = @roc groupsize=threads gridsize=grid queue=qs[1] copy2buf!(Buf, A, nx2)
+        
+        for iside = 1:2
+            wait(signals[iside])
         end
     end
+
     @assert A[1:nx2,:] ≈ Buf
 
     println("Done")
