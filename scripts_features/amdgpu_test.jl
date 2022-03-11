@@ -1,15 +1,25 @@
 using AMDGPU
 
-@inbounds function memcopy_triad!(A, B, C, s, side)
+@inbounds function memcopy_triad!(A, B, C, s, nx2, side)
     ix = (workgroupIdx().x - 1) * workgroupDim().x + workitemIdx().x
     iy = (workgroupIdx().y - 1) * workgroupDim().y + workitemIdx().y
-    if side == 1 && ix < size(A,1) / 2
+    if side == 1 && ix <= nx2
         A[ix,iy] = B[ix,iy] + s*C[ix,iy]
-    elseif side == 2 && ix >= size(A,1) / 2
+    elseif side == 2 && ix > nx2
         A[ix,iy] = B[ix,iy] + 2s*C[ix,iy]
     end
     return
 end
+
+@inbounds function copy2buf!(Buf, A, nx2)
+    ix = (workgroupIdx().x - 1) * workgroupDim().x + workitemIdx().x
+    iy = (workgroupIdx().y - 1) * workgroupDim().y + workitemIdx().y
+    if ix <= nx2
+        Buf[ix,iy] = A[ix,iy]
+    end
+    return
+end
+
 
 function main()
     println("AMDGPU functional: $(AMDGPU.functional())")
@@ -17,10 +27,13 @@ function main()
     nx, ny  = 16*1024, 16*1024
     threads = (32, 8)
     grid    = (nx, ny)
+    nx2     = Int(round(nx/2))
+    nrep    = 5
 
-    A = AMDGPU.zeros(nx,ny)
-    B =  AMDGPU.ones(nx,ny)
-    C =  AMDGPU.ones(nx,ny)
+    A   = AMDGPU.zeros(nx,ny)
+    B   =  AMDGPU.ones(nx,ny)
+    C   =  AMDGPU.ones(nx,ny)
+    Buf = AMDGPU.zeros(nx2,ny)
 
     s = 1.0
 
@@ -36,25 +49,27 @@ function main()
 
     signals = Vector{AMDGPU.RuntimeEvent{AMDGPU.HSAStatusSignal}}(undef,2)
 
-    for side = 1:2
-        signals[side] = @roc groupsize=threads gridsize=grid queue=qs[side] memcopy_triad!(A, B, C, s, side)
-    end
+    for irep = 1:nrep
+        for iside = 1:2
+            signals[iside] = @roc groupsize=threads gridsize=grid queue=qs[iside] memcopy_triad!(A, B, C, s, nx2, iside)
+            @async wait(signals[iside])
+        end
 
-    for side = 1:2
-        wait(signals[side])
-    end
+        # for iside = 1:2 # the same as @async in the loop above
+        #     wait(signals[iside])
+        # end
 
-    for side = 1
-        signals[side] = @roc groupsize=threads gridsize=grid queue=qs[side] memcopy_triad!(A, B, C, s, side)
+        for iside = 1
+            signals[iside] = @roc groupsize=threads gridsize=grid queue=qs[iside] copy2buf!(Buf, A, nx2)
+            wait(signals[iside]) # without @async here host blocks until cpy2buf is done before going to next irep
+            # one could use @async if next task is totally independent 
+        end
     end
-
-    for side = 1
-        wait(signals[side])
-    end
+    @assert A[1:nx2,:] ≈ Buf
 
     println("Done")
 
-    return A
+    return Buf
 end
 
 main()

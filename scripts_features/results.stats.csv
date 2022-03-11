@@ -1,3 +1,0 @@
-"Name","Calls","TotalDurationNs","AverageNs","Percentage"
-"julia_memcopy_triad__2345(ROCDeviceArray<Float32, 2, 1>, ROCDeviceArray<Float32, 2, 1>, ROCDeviceArray<Float32, 2, 1>, Float64, Int64) [clone .kd]",3,21889410,7296470,59.46484758550455
-"julia__5_1240(ROCKernelContext, ROCDeviceArray<Float32, 2, 1>, Float32) [clone .kd]",3,14921262,4973754,40.53515241449545
