@@ -17,16 +17,6 @@
     }                                                                                                                                                          \
   } while (0)
 
-static void print_matrix(double *A, size_t nx, size_t ny) {
-  for (size_t iy = 0, idx = 0; iy < ny; ++iy) {
-    printf("      ");
-    for (size_t ix = 0; ix < nx; ++ix, ++idx) {
-      printf("%.3f  ", A[idx]);
-    }
-    printf("\n");
-  }
-}
-
 typedef struct RegionInfo_s {
   hsa_region_segment_t segment;
   bool alloc_allowed;
