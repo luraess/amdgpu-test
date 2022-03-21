@@ -6,15 +6,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define check(expr)                                                                                                    \
-  do {                                                                                                                 \
-    hsa_status_t err = expr;                                                                                           \
-    if (err != HSA_STATUS_SUCCESS) {                                                                                   \
-      const char *msg;                                                                                                 \
-      hsa_status_string(err, &msg);                                                                                    \
-      fprintf(stderr, "Error (file %s, line %d): %s\n", __FILE__, __LINE__, msg);                                      \
-      exit(EXIT_FAILURE);                                                                                              \
-    }                                                                                                                  \
+#define check(expr)                                                                                                                                            \
+  do {                                                                                                                                                         \
+    hsa_status_t err = expr;                                                                                                                                   \
+    if (err != HSA_STATUS_SUCCESS) {                                                                                                                           \
+      const char *msg;                                                                                                                                         \
+      hsa_status_string(err, &msg);                                                                                                                            \
+      fprintf(stderr, "Error (file %s, line %d): %s\n", __FILE__, __LINE__, msg);                                                                              \
+      exit(EXIT_FAILURE);                                                                                                                                      \
+    }                                                                                                                                                          \
   } while (0)
 
 static void print_matrix(double *A, size_t nx, size_t ny) {
@@ -30,6 +30,7 @@ static void print_matrix(double *A, size_t nx, size_t ny) {
 typedef struct RegionInfo_s {
   hsa_region_segment_t segment;
   bool alloc_allowed;
+  bool host_accessible;
   size_t size;
   size_t max_alloc_size;
   uint32_t global_flags;
@@ -48,6 +49,7 @@ typedef struct Regions_s {
 typedef struct AgentInfo_s {
   char name[64];
   hsa_device_type_t type;
+  hsa_amd_coherency_type_t coherent;
 } AgentInfo;
 
 typedef struct Agent_s {
@@ -64,14 +66,12 @@ typedef struct Agents_s {
 hsa_status_t get_region_callback(hsa_region_t region, void *data) {
   Regions *regions = (Regions *)data;
   check(hsa_region_get_info(region, HSA_REGION_INFO_SEGMENT, &regions->regions[regions->count].info.segment));
-  check(hsa_region_get_info(region, HSA_REGION_INFO_RUNTIME_ALLOC_ALLOWED,
-                            &regions->regions[regions->count].info.alloc_allowed));
-  check(hsa_region_get_info(region, HSA_REGION_INFO_ALLOC_MAX_SIZE,
-                            &regions->regions[regions->count].info.max_alloc_size));
+  check(hsa_region_get_info(region, HSA_REGION_INFO_RUNTIME_ALLOC_ALLOWED, &regions->regions[regions->count].info.alloc_allowed));
+  check(hsa_region_get_info(region, (hsa_region_info_t)HSA_AMD_REGION_INFO_HOST_ACCESSIBLE, &regions->regions[regions->count].info.host_accessible));
+  check(hsa_region_get_info(region, HSA_REGION_INFO_ALLOC_MAX_SIZE, &regions->regions[regions->count].info.max_alloc_size));
   check(hsa_region_get_info(region, HSA_REGION_INFO_SIZE, &regions->regions[regions->count].info.size));
   if (regions->regions[regions->count].info.segment == HSA_REGION_SEGMENT_GLOBAL) {
-    check(
-        hsa_region_get_info(region, HSA_REGION_INFO_GLOBAL_FLAGS, &regions->regions[regions->count].info.global_flags));
+    check(hsa_region_get_info(region, HSA_REGION_INFO_GLOBAL_FLAGS, &regions->regions[regions->count].info.global_flags));
   } else {
     regions->regions[regions->count].info.global_flags = UINT32_MAX;
   }
@@ -82,8 +82,13 @@ hsa_status_t get_region_callback(hsa_region_t region, void *data) {
 
 hsa_status_t get_agent_callback(hsa_agent_t agent, void *data) {
   Agents *agents = (Agents *)data;
-  check(hsa_agent_get_info(agent, HSA_AGENT_INFO_NAME, agents->agents[agents->count].info.name));
   check(hsa_agent_get_info(agent, HSA_AGENT_INFO_DEVICE, &agents->agents[agents->count].info.type));
+  if (agents->agents[agents->count].info.type != HSA_DEVICE_TYPE_GPU) {
+    return HSA_STATUS_SUCCESS;
+  }
+  check(hsa_agent_get_info(agent, (hsa_agent_info_t)HSA_AMD_AGENT_INFO_UUID, agents->agents[agents->count].info.name));
+  check(hsa_amd_coherency_set_type(agent, HSA_AMD_COHERENCY_TYPE_COHERENT));
+  check(hsa_amd_coherency_get_type(agent, &agents->agents[agents->count].info.coherent));
   agents->agents[agents->count].agent = agent;
   // get supported memory regions for agent
   Regions regions = {};
@@ -111,12 +116,14 @@ int main() {
     printf("Agent # %d:\n", iagent);
     printf("  Name: %s\n", info.name);
     printf("  Type: %s\n", (info.type == HSA_DEVICE_TYPE_CPU) ? "CPU" : "GPU");
+    printf("  Coherent: %s\n", (info.coherent == HSA_AMD_COHERENCY_TYPE_COHERENT) ? "yes" : "no");
     printf("  Regions:\n");
     Regions regions = agents.agents[iagent].regions;
     for (int iregion = 0; iregion < regions.count; ++iregion) {
       RegionInfo reg_info = regions.regions[iregion].info;
       printf("    Region # %d:\n", iregion);
       printf("      Handle: %lX\n", regions.regions[iregion].region.handle);
+      printf("      Accesible by host: %s\n", reg_info.host_accessible ? "yes" : "no");
       switch (reg_info.segment) {
       case HSA_REGION_SEGMENT_GLOBAL:
         printf("      Segment: global\n");
