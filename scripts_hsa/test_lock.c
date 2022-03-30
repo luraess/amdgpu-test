@@ -31,6 +31,7 @@ typedef struct RegionInfo_s {
   hsa_region_segment_t segment;
   bool alloc_allowed;
   size_t size;
+  uint32_t global_flags;
 } RegionInfo;
 
 typedef struct Region_s {
@@ -39,7 +40,7 @@ typedef struct Region_s {
 } Region;
 
 typedef struct Regions_s {
-  Region regions[16];
+  Region regions[128];
   int count;
 } Regions;
 
@@ -55,7 +56,7 @@ typedef struct Agent_s {
 } Agent;
 
 typedef struct Agents_s {
-  Agent agents[16];
+  Agent agents[128];
   int count;
 } Agents;
 
@@ -65,6 +66,12 @@ hsa_status_t get_region_callback(hsa_region_t region, void *data) {
   check(hsa_region_get_info(region, HSA_REGION_INFO_RUNTIME_ALLOC_ALLOWED,
                             &regions->regions[regions->count].info.alloc_allowed));
   check(hsa_region_get_info(region, HSA_REGION_INFO_ALLOC_MAX_SIZE, &regions->regions[regions->count].info.size));
+  if (regions->regions[regions->count].info.segment == HSA_REGION_SEGMENT_GLOBAL) {
+    check(
+        hsa_region_get_info(region, HSA_REGION_INFO_GLOBAL_FLAGS, &regions->regions[regions->count].info.global_flags));
+  } else {
+    regions->regions[regions->count].info.global_flags = UINT32_MAX;
+  }
   regions->regions[regions->count].region = region;
   regions->count++;
   return HSA_STATUS_SUCCESS;
@@ -96,33 +103,6 @@ int main() {
 
   Agents agents = get_agents();
 
-  for (int iagent = 0; iagent < agents.count; ++iagent) {
-    AgentInfo info = agents.agents[iagent].info;
-    printf("Agent # %d:\n", iagent);
-    printf("  Name: %s\n", info.name);
-    printf("  Type: %s\n", (info.type == HSA_DEVICE_TYPE_CPU) ? "CPU" : "GPU");
-    printf("  Regions:\n");
-    Regions regions = agents.agents[iagent].regions;
-    for (int iregion = 0; iregion < regions.count; ++iregion) {
-      RegionInfo reg_info = regions.regions[iregion].info;
-      printf("    Region # %d:\n", iregion);
-      printf("      Handle: %lX\n", regions.regions[iregion].region.handle);
-      switch (reg_info.segment) {
-      case HSA_REGION_SEGMENT_GLOBAL:
-        printf("      Segment: global\n");
-        break;
-      case HSA_REGION_SEGMENT_READONLY:
-        printf("      Segment: read-only\n");
-        break;
-      default:
-        printf("      Segment: other\n");
-        break;
-      }
-      printf("      Allocation allowed: %s\n", reg_info.alloc_allowed ? "yes" : "no");
-      printf("      Max allocation size: %lu GiB\n", reg_info.size >> 30);
-    }
-  }
-
   Agent cpu_agent = agents.agents[0];
   Agent gpu_agent = agents.agents[2];
 
@@ -147,7 +127,7 @@ int main() {
   print_matrix(A_h, nx, ny);
 
   check(hsa_memory_copy(A, A_h, nx * ny * sizeof(double)));
-  memset(A_h, 0, nx*ny*sizeof(double));
+  memset(A_h, 0, nx * ny * sizeof(double));
 
   printf("\n  Matrix (after memset):\n");
   print_matrix(A_h, nx, ny);
@@ -160,7 +140,8 @@ int main() {
 
   check(hsa_signal_create(1, 1, &cpu_agent.agent, &completion_signal));
 
-  check(hsa_amd_memory_async_copy(A_h_locked, cpu_agent.agent, A, gpu_agent.agent, nx*ny*sizeof(double), 0, NULL, completion_signal));
+  check(hsa_amd_memory_async_copy(A_h_locked, cpu_agent.agent, A, gpu_agent.agent, nx * ny * sizeof(double), 0, NULL,
+                                  completion_signal));
 
   check(hsa_signal_wait_scacquire(completion_signal, HSA_SIGNAL_CONDITION_LT, 1, UINT64_MAX, HSA_WAIT_STATE_ACTIVE));
 
