@@ -13,4 +13,4 @@ Visual profiling can be achieved using `rocprof` tool and inspecting the `hsa-tr
 
 The `.json` output file can be viewed using the Chrome browser opening `chrome://tracing` in Chrome:
 
-![](docs/rocprof_chrome_tracer.png)
+![](/docs/rocprof_chrome_tracer.png)
